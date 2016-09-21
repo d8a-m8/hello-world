@@ -25,11 +25,15 @@ library('random')
 
 ```{r}
 
-#Exploring the data frame
+#Exploring the data frame. You will need internet connection to run some of this code.
 gapminder
 summary(gapminder[,3:6])
+str(gapminder)
+```
 
-#interesting observation from this data set below
+Let's explore the relationship between life expectancy as a fucntion of GDP per capita.
+
+```{r}
 plot(log(lifeExp) ~ log(gdpPercap), data = gapminder)
 ```
 
@@ -41,12 +45,34 @@ plot(lifeExp ~ continent, data = gapminder)
 plot(log10(gdpPercap) ~ continent, data = gapminder)
 ```
 
-The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to corelate with GDP. Lets take a look to see if this trend holds up for different places. Let us make an abitrary decision on which countries to investigate.
+The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to corelate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an abitrary decision on which countries to investigate.
 
+```{r}
+country_names <- unique(gapminder['country'])
+
+cnm <- grep(
+  as.list(randomStrings(n=1,len=1,digits=F)), 
+  as.matrix(country_names[,1]))
+
+name.list <- country_names[cnm,]
+
+print(name.list)
+
+new_gp <- gapminder %>% 
+  filter(country %in% c(as.matrix(name.list)))
+
+new_gp_data <- new_gp %>% 
+  select(lifeExp, gdpPercap)
+  
+print(new_gp)
+```
+
+# %>% pipe operator fucn(arg1,arg2...) v. arg1 %>% func(arg2....)
+  
+```
 
 ```{r}
 
-country_names <- unique(gapminder['country'])
-
 ```
+
  
