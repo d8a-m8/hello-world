@@ -91,12 +91,35 @@ pt_lvg <- gapminder %>%
 
 #Making plot space
 
-pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))  
+pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = gdpPercap, y = lifeExp))
 
 #Assigning points
 ```
 
-Interesting...I have an idea for a future homework assignment and if I get it done in time I'll add it here too.
+Let's plot this on a different scale.
+
+```{r Replot}
+
+pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
+
+#or I could have added "+ scale_x_log10()" instead of two log10() :/
+```
+
+Really interesting. There does appear to be some linear correlation, particularly in the middle of the plot, but the correlation breaks down at the fringes. Possibly due to unknown, unconsidered factors.
+
+Let's check the correlation between these two variables.
+
+~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
+
+```{r !!!Correlations!!!}
+r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
+
+r_p #Pearson's C.C. (P.C.C.)
+
+r_p^2 #Coefficent of determination
+```
+
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other. 
 
 ```{r Modelling, include = F}
 # Modelling L v. G as Michaelis-Menten kinetics :D
@@ -114,41 +137,11 @@ model.p + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom
 #Turns out people aren't exactly like enzyme kinetics...hmmm. My major assumption is human age maxes out at some point here. seems more like two intersecting lines to me now....
 ```
 
-Anyways, let's plot this on a different scale.
-
-```{r Replot}
-
-pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
-
-#or I could have added "+ scale_x_log10()" instead of two log10() :/
-```
-
-Really interesting. There does appear to be some linear correlation, particularly in the middle of the plot, but the correlation breaks down at the fringes. Possibly due to unknown, unconsidered factors.
-
-~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
-
-```{r !!!Correlations!!!}
-r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
-
-r_p #Pearson's C.C. (P.C.C.)
-
-r_p^2 #Coefficent of determination
-```
-
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other. 
-
-Perhaps, later I will input a model here onced I figure out how to avoid the "singlar gradient" error. The help online is too maths for me, right now.
-
 Back to business.
-
-```{r}
-plot(lifeExp ~ continent, data = gapminder)
-plot(log10(gdpPercap) ~ continent, data = gapminder)
-```
 
 The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. _INCOMING: random data retreiver_
 
-```{r}
+```{r Random Country List Generator}
 country_names <- unique(gapminder['country'])
 
 cnm <- grep(
