@@ -21,7 +21,7 @@ That's why. I will be using the *random* package to make this interesting. Let's
 Initially, let us see what we are working with before any *<sub>CrA</sub>* *Z* *~<sub>~</sub> neSS ~<sub>~</sub>*.
 
 ``` r
-str(gapminder)  #Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
+str(gapminder)  
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    1704 obs. of  6 variables:
@@ -32,7 +32,13 @@ str(gapminder)  #Exploring tbl.df of gapminder, also could have formatted the sc
     ##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
     ##  $ gdpPercap: num  779 821 853 836 740 ...
 
-As expected this dataset is a tbl = tibble dataframe. Buckets of observations (1704) of the six tracked variables: country(factor), continent(factor), year(integer), life expectancy(double/float), population(integer), GDP per capita(double/float). We can also see there were 152 surveyed countries on all **five** continents. *<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
+``` r
+#Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
+```
+
+As expected this dataset is a tbl = tibble dataframe. Buckets of observations (1704) of the six tracked variables: country(factor), continent(factor), year(integer), life expectancy(double/float), population(integer), GDP per capita(double/float). We can also see there were 152 surveyed countries on all **five** continents.
+
+*<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
 
 To be clear, Gapminder is a tibble dataframe with 1704 rows of observations catergorized by six columns of factors/variables. These variables and the corresponding flavours are listed above.
 
@@ -54,6 +60,39 @@ gapminder[,3:6] %>%
     ##  Max.   :2007   Max.   :82.60   Max.   :1.319e+09   Max.   :113523.1
 
 Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
+
+Here are some histograms (actually they are density plots, since density &gt; histogram) of these two variables without respect to continent or country.
+
+``` r
+p_hist <- gapminder %>% 
+  ggplot()
+
+p_hist + geom_density(aes(x = lifeExp), alpha = 0.5)
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Histograms-1.png)
+
+``` r
+p_hist + geom_density(aes(x = gdpPercap),alpha = 0.5)
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Histograms-2.png)
+
+With respect to continents? <sub>(</sub> <sub>countries</sub> <sub>would</sub> <sub>be</sub> <sub>crazy</sub> <sub>)</sub>
+
+Sidenote: I was initially running into troubles with facet\_wrap and using the pipe function to isolate a variable from gapminder.
+
+``` r
+p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-1.png)
+
+``` r
+p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 Investigation of Socio-Ecomonics in Gapminder
 ---------------------------------------------
@@ -80,7 +119,7 @@ Interesting...I have an idea for a future homework assignment and if I get it do
 Anyways, let's plot this on a different scale.
 
 ``` r
-pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent))  
+pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Replot-1.png)
@@ -88,6 +127,8 @@ pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = conti
 ``` r
 #or I could have added "+ scale_x_log10()" instead of two log10() :/
 ```
+
+Really interesting. There does appear to be some linear correlation, particularly in the middle of the plot, but the correlation breaks down at the fringes. Possibly due to unknown, unconsidered factors.
 
 ~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
@@ -115,13 +156,13 @@ Back to business.
 plot(lifeExp ~ continent, data = gapminder)
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 ``` r
 plot(log10(gdpPercap) ~ continent, data = gapminder)
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-2.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-3-2.png)
 
 The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. *INCOMING: random data retreiver*
 
@@ -137,15 +178,12 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 6 × 1
-    ##                  country
-    ##                   <fctr>
-    ## 1                Bolivia
-    ## 2 Bosnia and Herzegovina
-    ## 3          Cote d'Ivoire
-    ## 4            El Salvador
-    ## 5        Slovak Republic
-    ## 6               Slovenia
+    ## # A tibble: 3 × 1
+    ##       country
+    ##        <fctr>
+    ## 1 New Zealand
+    ## 2      Zambia
+    ## 3    Zimbabwe
 
 ``` r
 new_gp <- gapminder %>% 
@@ -157,17 +195,17 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 72 × 6
-    ##    country continent  year lifeExp     pop gdpPercap
-    ##     <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
-    ## 1  Bolivia  Americas  1952  40.414 2883315  2677.326
-    ## 2  Bolivia  Americas  1957  41.890 3211738  2127.686
-    ## 3  Bolivia  Americas  1962  43.428 3593918  2180.973
-    ## 4  Bolivia  Americas  1967  45.032 4040665  2586.886
-    ## 5  Bolivia  Americas  1972  46.714 4565872  2980.331
-    ## 6  Bolivia  Americas  1977  50.023 5079716  3548.098
-    ## 7  Bolivia  Americas  1982  53.859 5642224  3156.510
-    ## 8  Bolivia  Americas  1987  57.251 6156369  2753.691
-    ## 9  Bolivia  Americas  1992  59.957 6893451  2961.700
-    ## 10 Bolivia  Americas  1997  62.050 7693188  3326.143
-    ## # ... with 62 more rows
+    ## # A tibble: 36 × 6
+    ##        country continent  year lifeExp     pop gdpPercap
+    ##         <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
+    ## 1  New Zealand   Oceania  1952   69.39 1994794  10556.58
+    ## 2  New Zealand   Oceania  1957   70.26 2229407  12247.40
+    ## 3  New Zealand   Oceania  1962   71.24 2488550  13175.68
+    ## 4  New Zealand   Oceania  1967   71.52 2728150  14463.92
+    ## 5  New Zealand   Oceania  1972   71.89 2929100  16046.04
+    ## 6  New Zealand   Oceania  1977   72.22 3164900  16233.72
+    ## 7  New Zealand   Oceania  1982   73.84 3210650  17632.41
+    ## 8  New Zealand   Oceania  1987   74.32 3317166  19007.19
+    ## 9  New Zealand   Oceania  1992   76.33 3437674  18363.32
+    ## 10 New Zealand   Oceania  1997   77.55 3676187  21050.41
+    ## # ... with 26 more rows

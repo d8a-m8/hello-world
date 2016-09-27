@@ -35,10 +35,13 @@ That's why. I will be using the _random_ package to make this interesting. Let's
 Initially, let us see what we are working with before any _~CrA~_ _Z_ _~~~~ neSS ~~~~_.
 
 ```{r Explore feactures of gapminder with str function}
-str(gapminder)  #Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
+str(gapminder)  
+
+#Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
 ```
 
 As expected this dataset is a tbl = tibble dataframe. Buckets of observations (1704) of the six tracked variables: country(factor), continent(factor), year(integer), life expectancy(double/float), population(integer), GDP per capita(double/float). We can also see there were 152 surveyed countries on all **five** continents.
+
 _~looking~ ~at~ ~you~ **~ANTarctica~**_
 
 To be clear, Gapminder is a tibble dataframe with 1704 rows of observations catergorized by six columns of factors/variables. These variables and the corresponding flavours are listed above.
@@ -54,6 +57,25 @@ gapminder[,3:6] %>%
 
 Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
 
+Here are some histograms (actually they are density plots, since density > histogram) of these two variables without respect to continent or country.
+
+```{r Histograms}
+p_hist <- gapminder %>% 
+  ggplot()
+
+p_hist + geom_density(aes(x = lifeExp), alpha = 0.5)
+p_hist + geom_density(aes(x = gdpPercap),alpha = 0.5)
+```
+
+With respect to continents? ~(~ ~countries~ ~would~ ~be~ ~crazy~ ~)~
+
+```{r}
+p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
+```
+
+```{r}
+p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
+```
 
 ## Investigation of Socio-Ecomonics in Gapminder
 
@@ -83,21 +105,21 @@ m.x <- sort(x, decreasing = F)
 m.y <- (params['a'] * m.x) / (params['b'] + m.x)
 model.p <- gapminder %>% 
   ggplot()
-model.p + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = x, y = m.y, xend = 1800, yend = 100))
+model.p + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = m.x, y = m.y, xend = 1800, yend = 100))
 
-#Turns out people aren't exactly like enzyme kinetics...hmmm.
+#Turns out people aren't exactly like enzyme kinetics...hmmm. My major assumption is human age maxes out at some point here. seems more like two intersecting lines to me now....
 ```
 
 Anyways, let's plot this on a different scale.
 
 ```{r Replot}
 
-pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent))  
+pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
 
 #or I could have added "+ scale_x_log10()" instead of two log10() :/
 ```
 
-Seems like the continents populate this plot differently.
+Really interesting. There does appear to be some linear correlation, particularly in the middle of the plot, but the correlation breaks down at the fringes. Possibly due to unknown, unconsidered factors.
 
 ~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
