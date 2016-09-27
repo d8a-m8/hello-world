@@ -3,12 +3,15 @@ title: "Gapminder Unwinder: Hwk_2"
 author: "_d8a-m8_ a.k.a. _delta thru data_ a.k.a Yevgen '_the d8a nonh8a_' Kovalenko"
 date: "`r format (Sys.Date())`"
 output: github_document
-##yamal front matter ^^
+##yamal front matter 
+
 ---
 
 ## Minder the Gap. The door's are now closing.
 
 Welcome! This should be a fun ride today for you and I. So in this following report we will be exploring the Gapminder dataset...however, I will have no idea what you will end up seeing.
+
+So, get some coffee or tea or any consumable, potable liquid %>% temperature(hot:cold) and let's get started. :D
 
 ```{r Setup, include=F}
 knitr::opts_chunk$set(echo=TRUE) #above: hides this chunk, inline:sets all chunks to be viewed globally
@@ -27,46 +30,80 @@ Why?
 library("random")
 ```
 
-That's why. I will be using the _random_ package to make this interesting. Let's explore the relationship between life expectancy as a fucntion of GDP per capita. (_You will need internet connection to run some of this code. Especially pertaining to the **random** functions._)
+That's why. I will be using the _random_ package to make this interesting. Let's explore the relationship between life expectancy as a function of GDP per capita. (_You will need internet connection to run some of this code. Especially pertaining to the **random** functions._)
 
 Initially, let us see what we are working with before any _~CrA~_ _Z_ _~~~~ neSS ~~~~_.
 
 ```{r Explore feactures of gapminder with str function}
-str(gapminder)  #Exploring tbl.df of gapminder
+str(gapminder)  #Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
 ```
 
-Expectedly, this dataset a tbl = tibble dataframe. Buckets of observations of the six tracked variables: country, continent, year, life expectancy, population, GDP per capita. We can also see there were 152 survey countries on all **five** continents. _~looking~ ~at~ ~you~ **~ANTarctica~**_
+As expected this dataset is a tbl = tibble dataframe. Buckets of observations (1704) of the six tracked variables: country(factor), continent(factor), year(integer), life expectancy(double/float), population(integer), GDP per capita(double/float). We can also see there were 152 surveyed countries on all **five** continents.
+_~looking~ ~at~ ~you~ **~ANTarctica~**_
+
+To be clear, Gapminder is a tibble dataframe with 1704 rows of observations catergorized by six columns of factors/variables. These variables and the corresponding flavours are listed above.
+
+Apart from using str(), simply typing the object name would provide that data following "#A tibble: ...". 
+
+Using the summary function, we can look at the basic statistical data of this dataframe. In particular, let us only consider the year, life expectancy, population, and GDP.
+
+```{r Summary}
+gapminder[,3:6] %>% 
+  summary()
+```
+
+Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
+
 
 ## Investigation of Socio-Ecomonics in Gapminder
 
 Now let's look at the exact same parameters as before and dive into how GDP and life expectancy correlate. _~(~ ~Now~ ~with~ ~ggplots~ ~and~ ~dplyr~ ~)~_
 
 ```{r Plot L v. G data}
-p_lvg <- gapminder %>% 
-  ggplot(aes(x = log10(gdpPercap), y = log10(lifeExp))) #Making plot space
+pt_lvg <- gapminder %>% 
+  ggplot()
 
-p_lvg + geom_point() + geom_smooth(lwd = 1, se = F, method = "lm")  #Assigning points and a trendline
+#Making plot space
+
+pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))  
+
+#Assigning points
 ```
 
-~~ Pearson's Correlation Coefficent & Coefficent of Determination~~
+Interesting...I have an idea for a future homework assignment and if I get it done in time I'll add it here too.
+
+Anyways, let's plot this on a different scale.
+
+```{r Replot}
+
+pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent))  
+
+#or I could have added "+ scale_x_log10()" instead of two log10() :/
+```
+
+
+~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
 ```{r !!!Correlations!!!}
 r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
 
-print(r_p) #Pearson's C.C. (P.C.C.)
+r_p #Pearson's C.C. (P.C.C.)
 
 r_p^2 #Coefficent of determination
 ```
 
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial becasue as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other. 
 
+Perhaps, later I will input a model here onced I figure out how to avoid the "singlar gradient" error. The help online is too maths for me, right now.
+
+Back to business.
 
 ```{r}
 plot(lifeExp ~ continent, data = gapminder)
 plot(log10(gdpPercap) ~ continent, data = gapminder)
 ```
 
-The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to corelate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an abitrary decision on which countries to investigate.
+The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. _INCOMING: random data retreiver_
 
 ```{r}
 country_names <- unique(gapminder['country'])

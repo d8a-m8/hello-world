@@ -8,13 +8,15 @@ Minder the Gap. The door's are now closing.
 
 Welcome! This should be a fun ride today for you and I. So in this following report we will be exploring the Gapminder dataset...however, I will have no idea what you will end up seeing.
 
+So, get some coffee or tea or any consumable, potable liquid %&gt;% temperature(hot:cold) and let's get started. :D
+
 Why?
 
 ``` r
 library("random")
 ```
 
-That's why. I will be using the *random* package to make this interesting. Let's explore the relationship between life expectancy as a fucntion of GDP per capita. (*You will need internet connection to run some of this code. Especially pertaining to the **random** functions.*)
+That's why. I will be using the *random* package to make this interesting. Let's explore the relationship between life expectancy as a function of GDP per capita. (*You will need internet connection to run some of this code. Especially pertaining to the **random** functions.*)
 
 Initially, let us see what we are working with before any *<sub>CrA</sub>* *Z* *~<sub>~</sub> neSS ~<sub>~</sub>*.
 
@@ -30,12 +32,12 @@ str(gapminder)  #Exploring tbl.df of gapminder
     ##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
     ##  $ gdpPercap: num  779 821 853 836 740 ...
 
-Expectedly, this dataset a tbl = tibble dataframe. Buckets of observations of the six tracked variables: country, continent, year, life expectancy, population, GDP per capita. We can also see there were 152 survey countries on all **five** continents. *<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
+As expected this dataset is a tbl = tibble dataframe. Buckets of observations of the six tracked variables: country, continent, year, life expectancy, population, GDP per capita. We can also see there were 152 surveyed countries on all **five** continents. *<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
 
 Investigation of Socio-Ecomonics in Gapminder
 ---------------------------------------------
 
-Now let's look at the exact same parameters as before and dive into how GDP and life expectancy correlate. <sub>Now</sub> <sub>with</sub> <sub>ggplots</sub> <sub>and</sub> <sub>dplyr</sub>
+Now let's look at the exact same parameters as before and dive into how GDP and life expectancy correlate. *<sub>(</sub> <sub>Now</sub> <sub>with</sub> <sub>ggplots</sub> <sub>and</sub> <sub>dplyr</sub> <sub>)</sub>*
 
 ``` r
 p_lvg <- gapminder %>% 
@@ -46,7 +48,7 @@ p_lvg + geom_point() + geom_smooth(lwd = 1, se = F, method = "lm")  #Assigning p
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Plot%20L%20v.%20G%20data-1.png)
 
-~~ Pearson's Correlation Coefficent & Coefficent of Determination~~
+~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
 ``` r
 r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
@@ -62,7 +64,11 @@ r_p^2 #Coefficent of determination
 
     ## [1] 0.6132023
 
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial becasue as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
+
+Perhaps, later I will input a model here onced I figure out how to avoid the "singlar gradient" error. The help online is too maths for me, right now.
+
+Back to business.
 
 ``` r
 plot(lifeExp ~ continent, data = gapminder)
@@ -76,7 +82,7 @@ plot(log10(gdpPercap) ~ continent, data = gapminder)
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
-The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to corelate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an abitrary decision on which countries to investigate.
+The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. *INCOMING: random data retreiver*
 
 ``` r
 country_names <- unique(gapminder['country'])
@@ -90,20 +96,20 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 36 × 1
-    ##                     country
-    ##                      <fctr>
-    ## 1                 Australia
-    ## 2                   Austria
-    ## 3                   Belgium
-    ## 4                  Bulgaria
-    ## 5              Burkina Faso
-    ## 6                   Burundi
-    ## 7  Central African Republic
-    ## 8                      Cuba
-    ## 9            Czech Republic
-    ## 10                 Djibouti
-    ## # ... with 26 more rows
+    ## # A tibble: 33 × 1
+    ##                   country
+    ##                    <fctr>
+    ## 1              Bangladesh
+    ## 2  Bosnia and Herzegovina
+    ## 3                 Burundi
+    ## 4                Cambodia
+    ## 5                  Canada
+    ## 6                    Chad
+    ## 7           Cote d'Ivoire
+    ## 8                 Ecuador
+    ## 9             El Salvador
+    ## 10                Finland
+    ## # ... with 23 more rows
 
 ``` r
 new_gp <- gapminder %>% 
@@ -115,22 +121,17 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 432 × 6
-    ##      country continent  year lifeExp      pop gdpPercap
-    ##       <fctr>    <fctr> <int>   <dbl>    <int>     <dbl>
-    ## 1  Australia   Oceania  1952   69.12  8691212  10039.60
-    ## 2  Australia   Oceania  1957   70.33  9712569  10949.65
-    ## 3  Australia   Oceania  1962   70.93 10794968  12217.23
-    ## 4  Australia   Oceania  1967   71.10 11872264  14526.12
-    ## 5  Australia   Oceania  1972   71.93 13177000  16788.63
-    ## 6  Australia   Oceania  1977   73.49 14074100  18334.20
-    ## 7  Australia   Oceania  1982   74.74 15184200  19477.01
-    ## 8  Australia   Oceania  1987   76.32 16257249  21888.89
-    ## 9  Australia   Oceania  1992   77.56 17481977  23424.77
-    ## 10 Australia   Oceania  1997   78.83 18565243  26997.94
-    ## # ... with 422 more rows
-
-%&gt;% pipe operator fucn(arg1,arg2...) v. arg1 %&gt;% func(arg2....)
-=====================================================================
-
-\`\`\`
+    ## # A tibble: 396 × 6
+    ##       country continent  year lifeExp       pop gdpPercap
+    ##        <fctr>    <fctr> <int>   <dbl>     <int>     <dbl>
+    ## 1  Bangladesh      Asia  1952  37.484  46886859  684.2442
+    ## 2  Bangladesh      Asia  1957  39.348  51365468  661.6375
+    ## 3  Bangladesh      Asia  1962  41.216  56839289  686.3416
+    ## 4  Bangladesh      Asia  1967  43.453  62821884  721.1861
+    ## 5  Bangladesh      Asia  1972  45.252  70759295  630.2336
+    ## 6  Bangladesh      Asia  1977  46.923  80428306  659.8772
+    ## 7  Bangladesh      Asia  1982  50.009  93074406  676.9819
+    ## 8  Bangladesh      Asia  1987  52.819 103764241  751.9794
+    ## 9  Bangladesh      Asia  1992  56.018 113704579  837.8102
+    ## 10 Bangladesh      Asia  1997  59.412 123315288  972.7700
+    ## # ... with 386 more rows
