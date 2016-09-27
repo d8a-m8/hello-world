@@ -21,7 +21,7 @@ That's why. I will be using the *random* package to make this interesting. Let's
 Initially, let us see what we are working with before any *<sub>CrA</sub>* *Z* *~<sub>~</sub> neSS ~<sub>~</sub>*.
 
 ``` r
-str(gapminder)  #Exploring tbl.df of gapminder
+str(gapminder)  #Exploring tbl.df of gapminder, also could have formatted the script as in Chuck 4 (Summary)
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    1704 obs. of  6 variables:
@@ -32,7 +32,28 @@ str(gapminder)  #Exploring tbl.df of gapminder
     ##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
     ##  $ gdpPercap: num  779 821 853 836 740 ...
 
-As expected this dataset is a tbl = tibble dataframe. Buckets of observations of the six tracked variables: country, continent, year, life expectancy, population, GDP per capita. We can also see there were 152 surveyed countries on all **five** continents. *<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
+As expected this dataset is a tbl = tibble dataframe. Buckets of observations (1704) of the six tracked variables: country(factor), continent(factor), year(integer), life expectancy(double/float), population(integer), GDP per capita(double/float). We can also see there were 152 surveyed countries on all **five** continents. *<sub>looking</sub> <sub>at</sub> <sub>you</sub> **<sub>ANTarctica</sub>***
+
+To be clear, Gapminder is a tibble dataframe with 1704 rows of observations catergorized by six columns of factors/variables. These variables and the corresponding flavours are listed above.
+
+Apart from using str(), simply typing the object name would provide that data following "\#A tibble: ...".
+
+Using the summary function, we can look at the basic statistical data of this dataframe. In particular, let us only consider the year, life expectancy, population, and GDP.
+
+``` r
+gapminder[,3:6] %>% 
+  summary()
+```
+
+    ##       year         lifeExp           pop              gdpPercap       
+    ##  Min.   :1952   Min.   :23.60   Min.   :6.001e+04   Min.   :   241.2  
+    ##  1st Qu.:1966   1st Qu.:48.20   1st Qu.:2.794e+06   1st Qu.:  1202.1  
+    ##  Median :1980   Median :60.71   Median :7.024e+06   Median :  3531.8  
+    ##  Mean   :1980   Mean   :59.47   Mean   :2.960e+07   Mean   :  7215.3  
+    ##  3rd Qu.:1993   3rd Qu.:70.85   3rd Qu.:1.959e+07   3rd Qu.:  9325.5  
+    ##  Max.   :2007   Max.   :82.60   Max.   :1.319e+09   Max.   :113523.1
+
+Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
 
 Investigation of Socio-Ecomonics in Gapminder
 ---------------------------------------------
@@ -40,20 +61,40 @@ Investigation of Socio-Ecomonics in Gapminder
 Now let's look at the exact same parameters as before and dive into how GDP and life expectancy correlate. *<sub>(</sub> <sub>Now</sub> <sub>with</sub> <sub>ggplots</sub> <sub>and</sub> <sub>dplyr</sub> <sub>)</sub>*
 
 ``` r
-p_lvg <- gapminder %>% 
-  ggplot(aes(x = log10(gdpPercap), y = log10(lifeExp))) #Making plot space
+pt_lvg <- gapminder %>% 
+  ggplot()
 
-p_lvg + geom_point() + geom_smooth(lwd = 1, se = F, method = "lm")  #Assigning points and a trendline
+#Making plot space
+
+pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))  
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Plot%20L%20v.%20G%20data-1.png)
+
+``` r
+#Assigning points
+```
+
+Interesting...I have an idea for a future homework assignment and if I get it done in time I'll add it here too.
+
+Anyways, let's plot this on a different scale.
+
+``` r
+pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent))  
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Replot-1.png)
+
+``` r
+#or I could have added "+ scale_x_log10()" instead of two log10() :/
+```
 
 ~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
 ``` r
 r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
 
-print(r_p) #Pearson's C.C. (P.C.C.)
+r_p #Pearson's C.C. (P.C.C.)
 ```
 
     ## [1] 0.7830724
@@ -96,20 +137,15 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 33 × 1
-    ##                   country
-    ##                    <fctr>
-    ## 1              Bangladesh
-    ## 2  Bosnia and Herzegovina
-    ## 3                 Burundi
-    ## 4                Cambodia
-    ## 5                  Canada
-    ## 6                    Chad
-    ## 7           Cote d'Ivoire
-    ## 8                 Ecuador
-    ## 9             El Salvador
-    ## 10                Finland
-    ## # ... with 23 more rows
+    ## # A tibble: 6 × 1
+    ##                  country
+    ##                   <fctr>
+    ## 1                Bolivia
+    ## 2 Bosnia and Herzegovina
+    ## 3          Cote d'Ivoire
+    ## 4            El Salvador
+    ## 5        Slovak Republic
+    ## 6               Slovenia
 
 ``` r
 new_gp <- gapminder %>% 
@@ -121,17 +157,17 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 396 × 6
-    ##       country continent  year lifeExp       pop gdpPercap
-    ##        <fctr>    <fctr> <int>   <dbl>     <int>     <dbl>
-    ## 1  Bangladesh      Asia  1952  37.484  46886859  684.2442
-    ## 2  Bangladesh      Asia  1957  39.348  51365468  661.6375
-    ## 3  Bangladesh      Asia  1962  41.216  56839289  686.3416
-    ## 4  Bangladesh      Asia  1967  43.453  62821884  721.1861
-    ## 5  Bangladesh      Asia  1972  45.252  70759295  630.2336
-    ## 6  Bangladesh      Asia  1977  46.923  80428306  659.8772
-    ## 7  Bangladesh      Asia  1982  50.009  93074406  676.9819
-    ## 8  Bangladesh      Asia  1987  52.819 103764241  751.9794
-    ## 9  Bangladesh      Asia  1992  56.018 113704579  837.8102
-    ## 10 Bangladesh      Asia  1997  59.412 123315288  972.7700
-    ## # ... with 386 more rows
+    ## # A tibble: 72 × 6
+    ##    country continent  year lifeExp     pop gdpPercap
+    ##     <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
+    ## 1  Bolivia  Americas  1952  40.414 2883315  2677.326
+    ## 2  Bolivia  Americas  1957  41.890 3211738  2127.686
+    ## 3  Bolivia  Americas  1962  43.428 3593918  2180.973
+    ## 4  Bolivia  Americas  1967  45.032 4040665  2586.886
+    ## 5  Bolivia  Americas  1972  46.714 4565872  2980.331
+    ## 6  Bolivia  Americas  1977  50.023 5079716  3548.098
+    ## 7  Bolivia  Americas  1982  53.859 5642224  3156.510
+    ## 8  Bolivia  Americas  1987  57.251 6156369  2753.691
+    ## 9  Bolivia  Americas  1992  59.957 6893451  2961.700
+    ## 10 Bolivia  Americas  1997  62.050 7693188  3326.143
+    ## # ... with 62 more rows

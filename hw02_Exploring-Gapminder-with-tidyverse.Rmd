@@ -72,6 +72,22 @@ pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))
 
 Interesting...I have an idea for a future homework assignment and if I get it done in time I'll add it here too.
 
+```{r Modelling, include = F}
+# Modelling L v. G as Michaelis-Menten kinetics :D
+
+x <- c(as.matrix(gapminder['gdpPercap']))
+y <- c(as.matrix(gapminder['lifeExp']))
+fitModel <- nls(y ~ (a * x) / (b + x), start=list(a=1, b=0.5))
+params = coef(fitModel)
+m.x <- sort(x, decreasing = F)
+m.y <- (params['a'] * m.x) / (params['b'] + m.x)
+model.p <- gapminder %>% 
+  ggplot()
+model.p + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = x, y = m.y, xend = 1800, yend = 100))
+
+#Turns out people aren't exactly like enzyme kinetics...hmmm.
+```
+
 Anyways, let's plot this on a different scale.
 
 ```{r Replot}
@@ -81,6 +97,7 @@ pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = conti
 #or I could have added "+ scale_x_log10()" instead of two log10() :/
 ```
 
+Seems like the continents populate this plot differently.
 
 ~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
