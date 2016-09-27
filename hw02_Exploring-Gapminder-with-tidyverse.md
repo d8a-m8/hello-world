@@ -61,38 +61,40 @@ gapminder[,3:6] %>%
 
 Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
 
-Here are some histograms (actually they are density plots, since density &gt; histogram) of these two variables without respect to continent or country.
+Here are some histograms (the facetted plots will be density plots, since density &gt; histogram) of these two variables without respect to continent or country.
 
 ``` r
 p_hist <- gapminder %>% 
   ggplot()
 
-p_hist + geom_density(aes(x = lifeExp), alpha = 0.5)
+p_hist + geom_histogram(aes(x = lifeExp), alpha = 0.5, binwidth = 5)
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Histograms-1.png)
 
 ``` r
-p_hist + geom_density(aes(x = gdpPercap),alpha = 0.5)
+p_hist + geom_histogram(aes(x = gdpPercap),alpha = 0.5, binwidth = 10000)
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Histograms-2.png)
 
 With respect to continents? <sub>(</sub> <sub>countries</sub> <sub>would</sub> <sub>be</sub> <sub>crazy</sub> <sub>)</sub>
 
-Sidenote: I was initially running into troubles with facet\_wrap and using the pipe function to isolate a variable from gapminder.
-
 ``` r
 p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Density%20Plots1-1.png)
 
 ``` r
 p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Density%20Plots2-1.png)
+
+So, what do we see here? Well, for life expectancy Americas, Asia, Europe, and Oceania have left-skewed distributions. Africa has a right-skewed distribution. As for GDP, all continents are right-skewed for GDP per capita.
+
+Can we say anything about the relationship between these two variables? *No.* In order to have a mandate to talk about this we must plot **MORE GRAPHS** !!!
 
 Investigation of Socio-Ecomonics in Gapminder
 ---------------------------------------------
@@ -156,13 +158,13 @@ Back to business.
 plot(lifeExp ~ continent, data = gapminder)
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
 plot(log10(gdpPercap) ~ continent, data = gapminder)
 ```
 
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-3-2.png)
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. *INCOMING: random data retreiver*
 
@@ -178,12 +180,15 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 3 × 1
-    ##       country
-    ##        <fctr>
-    ## 1 New Zealand
-    ## 2      Zambia
-    ## 3    Zimbabwe
+    ## # A tibble: 6 × 1
+    ##        country
+    ##         <fctr>
+    ## 1      Lebanon
+    ## 2      Lesotho
+    ## 3      Liberia
+    ## 4        Libya
+    ## 5 Sierra Leone
+    ## 6    Sri Lanka
 
 ``` r
 new_gp <- gapminder %>% 
@@ -195,17 +200,17 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 36 × 6
-    ##        country continent  year lifeExp     pop gdpPercap
-    ##         <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
-    ## 1  New Zealand   Oceania  1952   69.39 1994794  10556.58
-    ## 2  New Zealand   Oceania  1957   70.26 2229407  12247.40
-    ## 3  New Zealand   Oceania  1962   71.24 2488550  13175.68
-    ## 4  New Zealand   Oceania  1967   71.52 2728150  14463.92
-    ## 5  New Zealand   Oceania  1972   71.89 2929100  16046.04
-    ## 6  New Zealand   Oceania  1977   72.22 3164900  16233.72
-    ## 7  New Zealand   Oceania  1982   73.84 3210650  17632.41
-    ## 8  New Zealand   Oceania  1987   74.32 3317166  19007.19
-    ## 9  New Zealand   Oceania  1992   76.33 3437674  18363.32
-    ## 10 New Zealand   Oceania  1997   77.55 3676187  21050.41
-    ## # ... with 26 more rows
+    ## # A tibble: 72 × 6
+    ##    country continent  year lifeExp     pop gdpPercap
+    ##     <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
+    ## 1  Lebanon      Asia  1952  55.928 1439529  4834.804
+    ## 2  Lebanon      Asia  1957  59.489 1647412  6089.787
+    ## 3  Lebanon      Asia  1962  62.094 1886848  5714.561
+    ## 4  Lebanon      Asia  1967  63.870 2186894  6006.983
+    ## 5  Lebanon      Asia  1972  65.421 2680018  7486.384
+    ## 6  Lebanon      Asia  1977  66.099 3115787  8659.697
+    ## 7  Lebanon      Asia  1982  66.983 3086876  7640.520
+    ## 8  Lebanon      Asia  1987  67.926 3089353  5377.091
+    ## 9  Lebanon      Asia  1992  69.292 3219994  6890.807
+    ## 10 Lebanon      Asia  1997  70.265 3430388  8754.964
+    ## # ... with 62 more rows

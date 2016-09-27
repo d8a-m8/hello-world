@@ -57,25 +57,29 @@ gapminder[,3:6] %>%
 
 Here we can see the global maximums and minimums of all four quantitative data, in addition to the first and third quartiles, the median, and the mean. Let's only consider life expectancy and GDP for now with respect to countries and continents.
 
-Here are some histograms (actually they are density plots, since density > histogram) of these two variables without respect to continent or country.
+Here are some histograms (the facetted plots will be density plots, since density > histogram) of these two variables without respect to continent or country.
 
 ```{r Histograms}
 p_hist <- gapminder %>% 
   ggplot()
 
-p_hist + geom_density(aes(x = lifeExp), alpha = 0.5)
-p_hist + geom_density(aes(x = gdpPercap),alpha = 0.5)
+p_hist + geom_histogram(aes(x = lifeExp), alpha = 0.5, binwidth = 5)
+p_hist + geom_histogram(aes(x = gdpPercap),alpha = 0.5, binwidth = 10000)
 ```
 
 With respect to continents? ~(~ ~countries~ ~would~ ~be~ ~crazy~ ~)~
 
-```{r}
+```{r Density Plots1}
 p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
 ```
 
-```{r}
+```{r Density Plots2}
 p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
 ```
+
+So, what do we see here? Well, for life expectancy Americas, Asia, Europe, and Oceania have left-skewed distributions. Africa has a right-skewed distribution. As for GDP, all continents are right-skewed for GDP per capita.
+
+Can we say anything about the relationship between these two variables? _No._ In order to talk about this we must plot **MORE GRAPHS** !!!
 
 ## Investigation of Socio-Ecomonics in Gapminder
 
