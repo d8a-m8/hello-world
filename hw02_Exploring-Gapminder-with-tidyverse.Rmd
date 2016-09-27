@@ -119,7 +119,7 @@ r_p #Pearson's C.C. (P.C.C.)
 r_p^2 #Coefficent of determination
 ```
 
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other. 
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, R<sup>2</sup> = 0.613) as the other factors will affect both that may or may not affect the other. 
 
 ```{r Modelling, include = F}
 # Modelling L v. G as Michaelis-Menten kinetics :D
@@ -144,13 +144,18 @@ The above trends may reflect the socio-economic status of a continent as life ex
 ```{r Random Country List Generator}
 country_names <- unique(gapminder['country'])
 
+rand.lett <- randomStrings(n=1,len=1,digits=F)
+print(rand.lett)
+
 cnm <- grep(
-  as.list(randomStrings(n=1,len=1,digits=F)), 
+  as.list(rand.lett), 
   as.matrix(country_names[,1]))
 
 name.list <- country_names[cnm,]
 
 print(name.list)
+
+# @ this point, all I have done is made of list of all the unique names of countries in gapminder. I proceed to grab all countries within that list that start with a randomly selected letter. A tibble of said countries is made "name.list". Then the script prints the list.
 
 new_gp <- gapminder %>% 
   filter(country %in% c(as.matrix(name.list)))
@@ -159,10 +164,35 @@ new_gp_data <- new_gp %>%
   select(lifeExp, gdpPercap)
   
 print(new_gp)
+print(new_gp_data)
+
+# Here is the good part well, the important one. A new gapminder "new_gp" data set is filtered by all the names in the name.list. New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
 ```
 
-```{r}
+Now if you're still here. We have one more thing to do. I hope it's not too crazy. 
 
+Note: this will not work if you lack internet connection. Also, it may take some time depending on the performance capabilities of your computer. Sorry for computers with little RAM and/or
+
+```{r Nice plot to finish off.}
+p_ngp <- new_gp %>% 
+  ggplot()
+
+p_ngp + geom_point(aes(x = gdpPercap, y = lifeExp)) + geom_smooth(aes(x = gdpPercap, y = lifeExp)) + scale_x_log10() + facet_wrap(~ country)
+
+r.p <- new_gp_data %>% 
+  with(cor(log10(gdpPercap), log10(lifeExp))) 
+
+#Assigning object that is the P.C.C. of lifeExp and GDP
+
+r.p #Pearson's C.C. (P.C.C.)
+
+r.p^2 #Coefficent of determination
 ```
 
- 
+Now if this works as intended, you will have a "unique" letter from print(rand.lett) and list of countries with associated graphs and correlation coffiecients.
+
+If you can handle reading these nearly 200 lines of code, I applaud you. I got tired just typing this all out!
+
+To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work.
+
+_CHEERS!_

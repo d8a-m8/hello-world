@@ -1,7 +1,7 @@
 Gapminder Unwinder: Hwk\_2
 ================
 *d8a-m8* a.k.a. *delta thru data* a.k.a Yevgen '*the d8a nonh8a*' Kovalenko
-2016-09-26
+2016-09-27
 
 Minder the Gap. The door's are now closing.
 -------------------------------------------
@@ -94,7 +94,7 @@ p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
 
 So, what do we see here? Well, for life expectancy Americas, Asia, Europe, and Oceania have left-skewed distributions. Africa has a right-skewed distribution. As for GDP, all continents are right-skewed for GDP per capita.
 
-Can we say anything about the relationship between these two variables? *No.* In order to have a mandate to talk about this we must plot **MORE GRAPHS** !!!
+Can we say anything about the relationship between these two variables? *No.* In order to talk about this we must plot **MORE GRAPHS** !!!
 
 Investigation of Socio-Ecomonics in Gapminder
 ---------------------------------------------
@@ -107,7 +107,7 @@ pt_lvg <- gapminder %>%
 
 #Making plot space
 
-pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))  
+pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = gdpPercap, y = lifeExp))
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Plot%20L%20v.%20G%20data-1.png)
@@ -116,9 +116,7 @@ pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent))
 #Assigning points
 ```
 
-Interesting...I have an idea for a future homework assignment and if I get it done in time I'll add it here too.
-
-Anyways, let's plot this on a different scale.
+Let's plot this on a different scale.
 
 ``` r
 pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
@@ -131,6 +129,8 @@ pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = conti
 ```
 
 Really interesting. There does appear to be some linear correlation, particularly in the middle of the plot, but the correlation breaks down at the fringes. Possibly due to unknown, unconsidered factors.
+
+Let's check the correlation between these two variables.
 
 ~~ Pearson's Correlation Coefficient & Coefficient of Determination~~
 
@@ -150,29 +150,23 @@ r_p^2 #Coefficent of determination
 
 As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
 
-Perhaps, later I will input a model here onced I figure out how to avoid the "singlar gradient" error. The help online is too maths for me, right now.
-
 Back to business.
-
-``` r
-plot(lifeExp ~ continent, data = gapminder)
-```
-
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-1.png)
-
-``` r
-plot(log10(gdpPercap) ~ continent, data = gapminder)
-```
-
-![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 The above trends may reflect the socio-economic status of a continent as life expectancy can be seen to correlate with GDP. Let's take a look to see if this trend holds up for different places. Let us make an arbitrary decision on which countries to investigate. *INCOMING: random data retreiver*
 
 ``` r
 country_names <- unique(gapminder['country'])
 
+rand.lett <- randomStrings(n=1,len=1,digits=F)
+print(rand.lett)
+```
+
+    ##      V1 
+    ## [1,] "M"
+
+``` r
 cnm <- grep(
-  as.list(randomStrings(n=1,len=1,digits=F)), 
+  as.list(rand.lett), 
   as.matrix(country_names[,1]))
 
 name.list <- country_names[cnm,]
@@ -180,17 +174,25 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 6 × 1
-    ##        country
-    ##         <fctr>
-    ## 1      Lebanon
-    ## 2      Lesotho
-    ## 3      Liberia
-    ## 4        Libya
-    ## 5 Sierra Leone
-    ## 6    Sri Lanka
+    ## # A tibble: 12 × 1
+    ##       country
+    ##        <fctr>
+    ## 1  Madagascar
+    ## 2      Malawi
+    ## 3    Malaysia
+    ## 4        Mali
+    ## 5  Mauritania
+    ## 6   Mauritius
+    ## 7      Mexico
+    ## 8    Mongolia
+    ## 9  Montenegro
+    ## 10    Morocco
+    ## 11 Mozambique
+    ## 12    Myanmar
 
 ``` r
+# @ this point, all I have done is made of list of all the unique names of countries in gapminder. I proceed to grab all countries within that list that start with a randomly selected letter. A tibble of said countries is made "name.list". Then the script prints the list.
+
 new_gp <- gapminder %>% 
   filter(country %in% c(as.matrix(name.list)))
 
@@ -200,17 +202,76 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 72 × 6
-    ##    country continent  year lifeExp     pop gdpPercap
-    ##     <fctr>    <fctr> <int>   <dbl>   <int>     <dbl>
-    ## 1  Lebanon      Asia  1952  55.928 1439529  4834.804
-    ## 2  Lebanon      Asia  1957  59.489 1647412  6089.787
-    ## 3  Lebanon      Asia  1962  62.094 1886848  5714.561
-    ## 4  Lebanon      Asia  1967  63.870 2186894  6006.983
-    ## 5  Lebanon      Asia  1972  65.421 2680018  7486.384
-    ## 6  Lebanon      Asia  1977  66.099 3115787  8659.697
-    ## 7  Lebanon      Asia  1982  66.983 3086876  7640.520
-    ## 8  Lebanon      Asia  1987  67.926 3089353  5377.091
-    ## 9  Lebanon      Asia  1992  69.292 3219994  6890.807
-    ## 10 Lebanon      Asia  1997  70.265 3430388  8754.964
-    ## # ... with 62 more rows
+    ## # A tibble: 144 × 6
+    ##       country continent  year lifeExp      pop gdpPercap
+    ##        <fctr>    <fctr> <int>   <dbl>    <int>     <dbl>
+    ## 1  Madagascar    Africa  1952  36.681  4762912 1443.0117
+    ## 2  Madagascar    Africa  1957  38.865  5181679 1589.2027
+    ## 3  Madagascar    Africa  1962  40.848  5703324 1643.3871
+    ## 4  Madagascar    Africa  1967  42.881  6334556 1634.0473
+    ## 5  Madagascar    Africa  1972  44.851  7082430 1748.5630
+    ## 6  Madagascar    Africa  1977  46.881  8007166 1544.2286
+    ## 7  Madagascar    Africa  1982  48.969  9171477 1302.8787
+    ## 8  Madagascar    Africa  1987  49.350 10568642 1155.4419
+    ## 9  Madagascar    Africa  1992  52.214 12210395 1040.6762
+    ## 10 Madagascar    Africa  1997  54.978 14165114  986.2959
+    ## # ... with 134 more rows
+
+``` r
+print(new_gp_data)
+```
+
+    ## # A tibble: 144 × 2
+    ##    lifeExp gdpPercap
+    ##      <dbl>     <dbl>
+    ## 1   36.681 1443.0117
+    ## 2   38.865 1589.2027
+    ## 3   40.848 1643.3871
+    ## 4   42.881 1634.0473
+    ## 5   44.851 1748.5630
+    ## 6   46.881 1544.2286
+    ## 7   48.969 1302.8787
+    ## 8   49.350 1155.4419
+    ## 9   52.214 1040.6762
+    ## 10  54.978  986.2959
+    ## # ... with 134 more rows
+
+``` r
+# Here is the good part well, the important one. A new gapminder "new_gp" data set is filtered by all the names in the name.list. New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
+```
+
+Now if you're still here. We have one more thing to do. I hope it's not too crazy.
+
+``` r
+p_ngp <- new_gp %>% 
+  ggplot()
+
+p_ngp + geom_point(aes(x = gdpPercap, y = lifeExp)) + geom_smooth(aes(x = gdpPercap, y = lifeExp)) + scale_x_log10() + facet_wrap(~ country)
+```
+
+![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Nice%20plot%20to%20finish%20off.-1.png)
+
+``` r
+r.p <- new_gp_data %>% 
+  with(cor(log10(gdpPercap), log10(lifeExp))) 
+
+#Assigning object that is the P.C.C. of lifeExp and GDP
+
+r.p #Pearson's C.C. (P.C.C.)
+```
+
+    ## [1] 0.8079753
+
+``` r
+r.p^2 #Coefficent of determination
+```
+
+    ## [1] 0.652824
+
+Now if this works as intended, you will have a "unique" letter from print(rand.lett) and list of countries with associated graphs and correlation coffiecients.
+
+If you can handle reading these nearly 200 lines of code, I applaud you. I got tired just typing this all out!
+
+To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work.
+
+*CHEERS!*
