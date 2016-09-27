@@ -1,46 +1,67 @@
 ---
 title: "Gapminder Unwinder: Hwk_2"
-author: "d8a-m8 a.k.a. delta thru data a.k.a Yevgen 'the d8a nonh8a' Kovalenko"
+author: "_d8a-m8_ a.k.a. _delta thru data_ a.k.a Yevgen '_the d8a nonh8a_' Kovalenko"
 date: "`r format (Sys.Date())`"
 output: github_document
 ##yamal front matter ^^
 ---
 
-~~~~~
-**again just messing around to make this class more fun and engaging for myself**
-~~~~~
+## Minder the Gap. The door's are now closing.
 
-## Load Gapminder data
+Welcome! This should be a fun ride today for you and I. So in this following report we will be exploring the Gapminder dataset...however, I will have no idea what you will end up seeing.
 
-...reflections...
-A
-```{r setup, include=F}
+```{r Setup, include=F}
 knitr::opts_chunk$set(echo=TRUE) #above: hides this chunk, inline:sets all chunks to be viewed globally
+
+#Selfnote: %>% pipe operator fucn(arg1,arg2...) v. arg1 %>% func(arg2....)
 
 library('gapminder')
 library('tibble')
 library('tidyverse')
-library('random')
+library('ggplot2')
 ```
 
-```{r}
+Why?
 
-#Exploring the data frame. You will need internet connection to run some of this code.
-gapminder
-summary(gapminder[,3:6])
-str(gapminder)
+```{r Present -Random- Package}
+library("random")
 ```
 
-Let's explore the relationship between life expectancy as a fucntion of GDP per capita.
+That's why. I will be using the _random_ package to make this interesting. Let's explore the relationship between life expectancy as a fucntion of GDP per capita. (_You will need internet connection to run some of this code. Especially pertaining to the **random** functions._)
 
-```{r}
-plot(log(lifeExp) ~ log(gdpPercap), data = gapminder)
+Initially, let us see what we are working with before any _~CrA~_ _Z_ _~~~~ neSS ~~~~_.
+
+```{r Explore feactures of gapminder with str function}
+str(gapminder)  #Exploring tbl.df of gapminder
 ```
 
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial becasue as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture as the other factors will affect both that may or may not affect the other.
+Expectedly, this dataset a tbl = tibble dataframe. Buckets of observations of the six tracked variables: country, continent, year, life expectancy, population, GDP per capita. We can also see there were 152 survey countries on all **five** continents. _~looking~ ~at~ ~you~ **~ANTarctica~**_
+
+## Investigation of Socio-Ecomonics in Gapminder
+
+Now let's look at the exact same parameters as before and dive into how GDP and life expectancy correlate. _~(~ ~Now~ ~with~ ~ggplots~ ~and~ ~dplyr~ ~)~_
+
+```{r Plot L v. G data}
+p_lvg <- gapminder %>% 
+  ggplot(aes(x = log10(gdpPercap), y = log10(lifeExp))) #Making plot space
+
+p_lvg + geom_point() + geom_smooth(lwd = 1, se = F, method = "lm")  #Assigning points and a trendline
+```
+
+~~ Pearson's Correlation Coefficent & Coefficent of Determination~~
+
+```{r !!!Correlations!!!}
+r_p <- with(gapminder, cor(log10(gdpPercap), log10(lifeExp))) #Assigning object that is the P.C.C. of lifeExp and GDP
+
+print(r_p) #Pearson's C.C. (P.C.C.)
+
+r_p^2 #Coefficent of determination
+```
+
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial becasue as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
+
 
 ```{r}
-#gapminder...looking at continental graphical distributions of population, life expectancy, and GDP
 plot(lifeExp ~ continent, data = gapminder)
 plot(log10(gdpPercap) ~ continent, data = gapminder)
 ```
@@ -65,10 +86,6 @@ new_gp_data <- new_gp %>%
   select(lifeExp, gdpPercap)
   
 print(new_gp)
-```
-
-# %>% pipe operator fucn(arg1,arg2...) v. arg1 %>% func(arg2....)
-  
 ```
 
 ```{r}
