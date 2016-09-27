@@ -8,8 +8,6 @@ Minder the Gap. The door's are now closing.
 
 Welcome! This should be a fun ride today for you and I. So in this following report we will be exploring the Gapminder dataset...however, I will have no idea what you will end up seeing.
 
-So, get some coffee or tea or any consumable, potable liquid %&gt;% temperature(hot:cold) and let's get started. :D
-
 Why?
 
 ``` r
@@ -19,6 +17,8 @@ library("random")
 That's why. I will be using the *random* package to make this interesting. Let's explore the relationship between life expectancy as a function of GDP per capita. (*You will need internet connection to run some of this code. Especially pertaining to the **random** functions.*)
 
 Initially, let us see what we are working with before any *<sub>CrA</sub>* *Z* *~<sub>~</sub> neSS ~<sub>~</sub>*.
+
+So, get some coffee or tea or any consumable, potable liquid %&gt;% temperature(hot:cold) and let's get started. :D s
 
 ``` r
 str(gapminder)  
@@ -81,13 +81,17 @@ p_hist + geom_histogram(aes(x = gdpPercap),alpha = 0.5, binwidth = 10000)
 With respect to continents? <sub>(</sub> <sub>countries</sub> <sub>would</sub> <sub>be</sub> <sub>crazy</sub> <sub>)</sub>
 
 ``` r
-p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
+p_hist + 
+  facet_wrap(~ continent) + 
+  geom_density(aes(x = lifeExp), alpha = 0.5) 
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Density%20Plots1-1.png)
 
 ``` r
-p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
+p_hist + 
+  facet_wrap(~ continent) + 
+  geom_density(aes(x = gdpPercap), alpha = 0.5)
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Density%20Plots2-1.png)
@@ -107,7 +111,9 @@ pt_lvg <- gapminder %>%
 
 #Making plot space
 
-pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = gdpPercap, y = lifeExp))
+pt_lvg + 
+  geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + 
+  geom_smooth(aes(x = gdpPercap, y = lifeExp))
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Plot%20L%20v.%20G%20data-1.png)
@@ -119,7 +125,9 @@ pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_
 Let's plot this on a different scale.
 
 ``` r
-pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
+pt_lvg + 
+  geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + 
+  geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Replot-1.png)
@@ -148,7 +156,7 @@ r_p^2 #Coefficent of determination
 
     ## [1] 0.6132023
 
-As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, (R<sup>2</sup>) = 0.613) as the other factors will affect both that may or may not affect the other.
+As seen above, there is some correlation between life expectancy and GDP per capita. Perhaps this is trivial because as GDP per capita increases, it could be said that quality of life also increases and thus, perhaps life expectancy. Although this clearly does not paint the complete picture (R = 0.783, R<sup>2</sup> = 0.613) as the other factors will affect both that may or may not affect the other.
 
 Back to business.
 
@@ -162,9 +170,11 @@ print(rand.lett)
 ```
 
     ##      V1 
-    ## [1,] "M"
+    ## [1,] "P"
 
 ``` r
+# Prints random letter
+
 cnm <- grep(
   as.list(rand.lett), 
   as.matrix(country_names[,1]))
@@ -174,24 +184,24 @@ name.list <- country_names[cnm,]
 print(name.list)
 ```
 
-    ## # A tibble: 12 × 1
-    ##       country
-    ##        <fctr>
-    ## 1  Madagascar
-    ## 2      Malawi
-    ## 3    Malaysia
-    ## 4        Mali
-    ## 5  Mauritania
-    ## 6   Mauritius
-    ## 7      Mexico
-    ## 8    Mongolia
-    ## 9  Montenegro
-    ## 10    Morocco
-    ## 11 Mozambique
-    ## 12    Myanmar
+    ## # A tibble: 9 × 1
+    ##                 country
+    ##                  <fctr>
+    ## 1              Pakistan
+    ## 2                Panama
+    ## 3              Paraguay
+    ## 4                  Peru
+    ## 5           Philippines
+    ## 6                Poland
+    ## 7              Portugal
+    ## 8           Puerto Rico
+    ## 9 Sao Tome and Principe
 
 ``` r
-# @ this point, all I have done is made of list of all the unique names of countries in gapminder. I proceed to grab all countries within that list that start with a randomly selected letter. A tibble of said countries is made "name.list". Then the script prints the list.
+# @ this point, all I have done is made of list of all the unique names of countries in gapminder. 
+# I proceed to grab all countries within that list that start with a randomly selected letter. 
+# A tibble of said countries is made "name.list". 
+# Then the script prints the list.
 
 new_gp <- gapminder %>% 
   filter(country %in% c(as.matrix(name.list)))
@@ -202,51 +212,59 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 ```
 
-    ## # A tibble: 144 × 6
-    ##       country continent  year lifeExp      pop gdpPercap
-    ##        <fctr>    <fctr> <int>   <dbl>    <int>     <dbl>
-    ## 1  Madagascar    Africa  1952  36.681  4762912 1443.0117
-    ## 2  Madagascar    Africa  1957  38.865  5181679 1589.2027
-    ## 3  Madagascar    Africa  1962  40.848  5703324 1643.3871
-    ## 4  Madagascar    Africa  1967  42.881  6334556 1634.0473
-    ## 5  Madagascar    Africa  1972  44.851  7082430 1748.5630
-    ## 6  Madagascar    Africa  1977  46.881  8007166 1544.2286
-    ## 7  Madagascar    Africa  1982  48.969  9171477 1302.8787
-    ## 8  Madagascar    Africa  1987  49.350 10568642 1155.4419
-    ## 9  Madagascar    Africa  1992  52.214 12210395 1040.6762
-    ## 10 Madagascar    Africa  1997  54.978 14165114  986.2959
-    ## # ... with 134 more rows
+    ## # A tibble: 108 × 6
+    ##     country continent  year lifeExp       pop gdpPercap
+    ##      <fctr>    <fctr> <int>   <dbl>     <int>     <dbl>
+    ## 1  Pakistan      Asia  1952  43.436  41346560  684.5971
+    ## 2  Pakistan      Asia  1957  45.557  46679944  747.0835
+    ## 3  Pakistan      Asia  1962  47.670  53100671  803.3427
+    ## 4  Pakistan      Asia  1967  49.800  60641899  942.4083
+    ## 5  Pakistan      Asia  1972  51.929  69325921 1049.9390
+    ## 6  Pakistan      Asia  1977  54.043  78152686 1175.9212
+    ## 7  Pakistan      Asia  1982  56.158  91462088 1443.4298
+    ## 8  Pakistan      Asia  1987  58.245 105186881 1704.6866
+    ## 9  Pakistan      Asia  1992  60.838 120065004 1971.8295
+    ## 10 Pakistan      Asia  1997  61.818 135564834 2049.3505
+    ## # ... with 98 more rows
 
 ``` r
 print(new_gp_data)
 ```
 
-    ## # A tibble: 144 × 2
+    ## # A tibble: 108 × 2
     ##    lifeExp gdpPercap
     ##      <dbl>     <dbl>
-    ## 1   36.681 1443.0117
-    ## 2   38.865 1589.2027
-    ## 3   40.848 1643.3871
-    ## 4   42.881 1634.0473
-    ## 5   44.851 1748.5630
-    ## 6   46.881 1544.2286
-    ## 7   48.969 1302.8787
-    ## 8   49.350 1155.4419
-    ## 9   52.214 1040.6762
-    ## 10  54.978  986.2959
-    ## # ... with 134 more rows
+    ## 1   43.436  684.5971
+    ## 2   45.557  747.0835
+    ## 3   47.670  803.3427
+    ## 4   49.800  942.4083
+    ## 5   51.929 1049.9390
+    ## 6   54.043 1175.9212
+    ## 7   56.158 1443.4298
+    ## 8   58.245 1704.6866
+    ## 9   60.838 1971.8295
+    ## 10  61.818 2049.3505
+    ## # ... with 98 more rows
 
 ``` r
-# Here is the good part well, the important one. A new gapminder "new_gp" data set is filtered by all the names in the name.list. New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
+# Here is the good part well, the important one. 
+# A new gapminder "new_gp" data set is filtered by all the names in the name.list. 
+# New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
 ```
 
 Now if you're still here. We have one more thing to do. I hope it's not too crazy.
+
+Note: this will not work if you lack internet connection. Also, it may take some time depending on the performance capabilities of your computer. Sorry for computers with little RAM and/or
 
 ``` r
 p_ngp <- new_gp %>% 
   ggplot()
 
-p_ngp + geom_point(aes(x = gdpPercap, y = lifeExp)) + geom_smooth(aes(x = gdpPercap, y = lifeExp)) + scale_x_log10() + facet_wrap(~ country)
+p_ngp + 
+  geom_point(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_smooth(aes(x = gdpPercap, y = lifeExp), se=F) + 
+  scale_x_log10() + 
+  facet_wrap(~ country, shrink = T)
 ```
 
 ![](hw02_Exploring-Gapminder-with-tidyverse_files/figure-markdown_github/Nice%20plot%20to%20finish%20off.-1.png)
@@ -255,23 +273,34 @@ p_ngp + geom_point(aes(x = gdpPercap, y = lifeExp)) + geom_smooth(aes(x = gdpPer
 r.p <- new_gp_data %>% 
   with(cor(log10(gdpPercap), log10(lifeExp))) 
 
-#Assigning object that is the P.C.C. of lifeExp and GDP
-
-r.p #Pearson's C.C. (P.C.C.)
+r.p 
 ```
 
-    ## [1] 0.8079753
+    ## [1] 0.7678229
 
 ``` r
-r.p^2 #Coefficent of determination
+# Pearson's C.C.
+
+r.p^2 
 ```
 
-    ## [1] 0.652824
+    ## [1] 0.589552
+
+``` r
+# Coefficent of determination
+```
 
 Now if this works as intended, you will have a "unique" letter from print(rand.lett) and list of countries with associated graphs and correlation coffiecients.
 
 If you can handle reading these nearly 200 lines of code, I applaud you. I got tired just typing this all out!
 
-To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work.
+To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work. -- new edit: now that I think about it, you'd have a run the script yourself to get a new letter. Try it out!
 
 *CHEERS!*
+
+*In the future, I will want to see if I can bin countries by correlation between gdpPercap v. lifeExp*
+
+...reflections...
+-----------------
+
+The most challenging part was making that model work and plot correctly. The most exciting part was scripting that random string to output and subset the list of unique list of countries. Overall, I enjoyed this assignment.

@@ -11,8 +11,6 @@ output: github_document
 
 Welcome! This should be a fun ride today for you and I. So in this following report we will be exploring the Gapminder dataset...however, I will have no idea what you will end up seeing.
 
-So, get some coffee or tea or any consumable, potable liquid %>% temperature(hot:cold) and let's get started. :D
-
 ```{r Setup, include=F}
 knitr::opts_chunk$set(echo=TRUE) #above: hides this chunk, inline:sets all chunks to be viewed globally
 
@@ -34,6 +32,8 @@ That's why. I will be using the _random_ package to make this interesting. Let's
 
 Initially, let us see what we are working with before any _~CrA~_ _Z_ _~~~~ neSS ~~~~_.
 
+So, get some coffee or tea or any consumable, potable liquid %>% temperature(hot:cold) and let's get started. :D
+s
 ```{r Explore feactures of gapminder with str function}
 str(gapminder)  
 
@@ -70,11 +70,15 @@ p_hist + geom_histogram(aes(x = gdpPercap),alpha = 0.5, binwidth = 10000)
 With respect to continents? ~(~ ~countries~ ~would~ ~be~ ~crazy~ ~)~
 
 ```{r Density Plots1}
-p_hist + facet_wrap(~ continent) + geom_density(aes(x = lifeExp), alpha = 0.5) 
+p_hist + 
+  facet_wrap(~ continent) + 
+  geom_density(aes(x = lifeExp), alpha = 0.5) 
 ```
 
 ```{r Density Plots2}
-p_hist + facet_wrap(~ continent) + geom_density(aes(x = gdpPercap), alpha = 0.5)
+p_hist + 
+  facet_wrap(~ continent) + 
+  geom_density(aes(x = gdpPercap), alpha = 0.5)
 ```
 
 So, what do we see here? Well, for life expectancy Americas, Asia, Europe, and Oceania have left-skewed distributions. Africa has a right-skewed distribution. As for GDP, all continents are right-skewed for GDP per capita.
@@ -91,7 +95,9 @@ pt_lvg <- gapminder %>%
 
 #Making plot space
 
-pt_lvg + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = gdpPercap, y = lifeExp))
+pt_lvg + 
+  geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + 
+  geom_smooth(aes(x = gdpPercap, y = lifeExp))
 
 #Assigning points
 ```
@@ -100,7 +106,9 @@ Let's plot this on a different scale.
 
 ```{r Replot}
 
-pt_lvg + geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
+pt_lvg + 
+  geom_point(aes(x = log10(gdpPercap), y = log10(lifeExp), colour = continent)) + 
+  geom_smooth(aes(x = log10(gdpPercap), y = log10(lifeExp)))
 
 #or I could have added "+ scale_x_log10()" instead of two log10() :/
 ```
@@ -132,9 +140,13 @@ m.x <- sort(x, decreasing = F)
 m.y <- (params['a'] * m.x) / (params['b'] + m.x)
 model.p <- gapminder %>% 
   ggplot()
-model.p + geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + geom_smooth(aes(x = m.x, y = m.y, xend = 1800, yend = 100))
+model.p + 
+  geom_point(aes(x = gdpPercap, y = lifeExp, colour = continent)) + 
+  geom_smooth(aes(x = m.x, y = m.y, xend = 1800, yend = 100))
 
-#Turns out people aren't exactly like enzyme kinetics...hmmm. My major assumption is human age maxes out at some point here. seems more like two intersecting lines to me now....
+#Turns out people aren't exactly like enzyme kinetics...hmmm. 
+#My major assumption is human age maxes out at some point here. 
+#Seems more like two intersecting lines to me now....
 ```
 
 Back to business.
@@ -147,6 +159,8 @@ country_names <- unique(gapminder['country'])
 rand.lett <- randomStrings(n=1,len=1,digits=F)
 print(rand.lett)
 
+# Prints random letter
+
 cnm <- grep(
   as.list(rand.lett), 
   as.matrix(country_names[,1]))
@@ -155,7 +169,10 @@ name.list <- country_names[cnm,]
 
 print(name.list)
 
-# @ this point, all I have done is made of list of all the unique names of countries in gapminder. I proceed to grab all countries within that list that start with a randomly selected letter. A tibble of said countries is made "name.list". Then the script prints the list.
+# @ this point, all I have done is made of list of all the unique names of countries in gapminder. 
+# I proceed to grab all countries within that list that start with a randomly selected letter. 
+# A tibble of said countries is made "name.list". 
+# Then the script prints the list.
 
 new_gp <- gapminder %>% 
   filter(country %in% c(as.matrix(name.list)))
@@ -166,7 +183,9 @@ new_gp_data <- new_gp %>%
 print(new_gp)
 print(new_gp_data)
 
-# Here is the good part well, the important one. A new gapminder "new_gp" data set is filtered by all the names in the name.list. New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
+# Here is the good part well, the important one. 
+# A new gapminder "new_gp" data set is filtered by all the names in the name.list. 
+# New_gp_data is created by selecting for GDP and life expectancy to ease calculations.
 ```
 
 Now if you're still here. We have one more thing to do. I hope it's not too crazy. 
@@ -177,22 +196,32 @@ Note: this will not work if you lack internet connection. Also, it may take some
 p_ngp <- new_gp %>% 
   ggplot()
 
-p_ngp + geom_point(aes(x = gdpPercap, y = lifeExp)) + geom_smooth(aes(x = gdpPercap, y = lifeExp)) + scale_x_log10() + facet_wrap(~ country)
+p_ngp + 
+  geom_point(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_smooth(aes(x = gdpPercap, y = lifeExp), se=F) + 
+  scale_x_log10() + 
+  facet_wrap(~ country, shrink = T)
 
 r.p <- new_gp_data %>% 
   with(cor(log10(gdpPercap), log10(lifeExp))) 
 
-#Assigning object that is the P.C.C. of lifeExp and GDP
+r.p 
+# Pearson's C.C.
 
-r.p #Pearson's C.C. (P.C.C.)
-
-r.p^2 #Coefficent of determination
+r.p^2 
+# Coefficent of determination
 ```
 
 Now if this works as intended, you will have a "unique" letter from print(rand.lett) and list of countries with associated graphs and correlation coffiecients.
 
 If you can handle reading these nearly 200 lines of code, I applaud you. I got tired just typing this all out!
 
-To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work.
+To show that you truly got to this point, please include your print(rand.lett) and correlation coffiecient results in your review of my work. -- new edit: now that I think about it, you'd have a run the script yourself to get a new letter. Try it out!
 
 _CHEERS!_
+
+_In the future, I will want to see if I can bin countries by correlation between gdpPercap v. lifeExp_
+
+## ...reflections...
+
+The most challenging part was making that model work and plot correctly. The most exciting part was scripting that random string to output and subset the list of unique list of countries. Overall, I enjoyed this assignment. 
